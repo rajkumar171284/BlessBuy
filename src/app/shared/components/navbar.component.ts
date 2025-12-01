@@ -39,6 +39,7 @@ import { AuthService } from '../../services/auth.service';
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a routerLink="/dashboard" class="dropdown-item">Dashboard</a></li>
                   <li><a routerLink="/admin/products" class="dropdown-item">Admin Panel</a></li>
+                  <li><a routerLink="/admin/bulk-add" class="dropdown-item">📦 Bulk Add Products</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a (click)="logout()" class="dropdown-item text-danger cursor-pointer">Logout</a></li>
                 </ul>

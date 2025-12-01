@@ -6,6 +6,7 @@ import { LoginComponent } from './pages/login.component';
 import { RegisterComponent } from './pages/register.component';
 import { DashboardComponent } from './pages/dashboard.component';
 import { AdminProductsComponent } from './pages/admin-products.component';
+import { BulkAddProductsComponent } from './pages/bulk-add-products.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -16,5 +17,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'admin/products', component: AdminProductsComponent, canActivate: [AuthGuard] },
+  { path: 'admin/bulk-add', component: BulkAddProductsComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
