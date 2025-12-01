@@ -1,1 +1,16 @@
-{}
+{
+  "hosting": {
+    "public": "dist/blessbuy/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
