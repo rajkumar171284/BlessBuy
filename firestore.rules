@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User profiles collection
+    match /users/{userId} {
+      // Users can read and write their own profile
+      allow read, write: if request.auth.uid == userId;
+      
+      // User's clicks subcollection
+      match /clicks/{clickId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+      
+      // User's earnings subcollection
+      match /earnings/{earningId} {
+        allow read, write: if request.auth.uid == userId;
+      }
+    }
+    
+    // Products collection - anyone can read, only admins can write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth.uid != null && isAdmin(request.auth.uid);
+    }
+    
+    // Referrals collection
+    match /referrals/{referralId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Analytics collection - read for own data
+    match /analytics/{analyticsId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin(uid) {
+      return exists(/databases/$(database)/documents/admins/$(uid));
+    }
+    
+    // Helper function to validate user data
+    function validateUserData() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['email', 'displayName', 'referralCode'])
+        && data.email is string
+        && data.displayName is string
+        && data.referralCode is string;
+    }
+  }
+}
