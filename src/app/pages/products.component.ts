@@ -206,16 +206,17 @@ import { ProductService } from '../services/product.service';
     }
 
     .hover-shadow {
-      transition: box-shadow 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: box-shadow, transform;
     }
     
     .hover-shadow:hover {
       box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
-      transform: translateY(-5px);
     }
 
     .card-img-top {
-      transition: transform 0.3s;
+      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
     }
 
     .card:hover .card-img-top {
