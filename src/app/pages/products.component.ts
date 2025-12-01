@@ -23,7 +23,12 @@ import { ProductService } from '../services/product.service';
         </select>
       </div>
 
-      <div class="products-grid">
+      <div *ngIf="isLoading" class="loader">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+
+      <div class="products-grid" *ngIf="!isLoading">
         <div class="product-card" *ngFor="let product of filteredProducts">
           <img [src]="product.image" [alt]="product.name">
           <h3>{{ product.name }}</h3>
@@ -35,7 +40,7 @@ import { ProductService } from '../services/product.service';
         </div>
       </div>
 
-      <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <div *ngIf="!isLoading && filteredProducts.length === 0" class="no-products">
         <p>No products found. Try adjusting your filters.</p>
       </div>
     </div>
@@ -158,6 +163,35 @@ import { ProductService } from '../services/product.service';
       padding: 40px;
       color: #999;
     }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader p {
+      color: #667eea;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
   `]
 })
 export class ProductsComponent implements OnInit {
@@ -165,13 +199,16 @@ export class ProductsComponent implements OnInit {
   filteredProducts: any[] = [];
   searchTerm: string = '';
   selectedCategory: string = '';
+  isLoading: boolean = true;
 
   constructor(private productService: ProductService) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.productService.getProductsObservable().subscribe(products => {
       this.products = products;
       this.filterProducts();
+      this.isLoading = false;
     });
   }
 

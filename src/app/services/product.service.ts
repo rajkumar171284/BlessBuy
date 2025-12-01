@@ -22,12 +22,15 @@ export class ProductService {
     return this.adminService.getProducts();
   }
 
-  getProductById(id: string): Product | undefined {
-    let product: Product | undefined;
-    this.adminService.getProductById(id).then(p => {
-      product = p || undefined;
+  getProductById(id: string): Observable<Product | undefined> {
+    return new Observable(observer => {
+      this.adminService.getProductById(id).then(p => {
+        observer.next(p || undefined);
+        observer.complete();
+      }).catch(error => {
+        observer.error(error);
+      });
     });
-    return product;
   }
 
   getProductsByCategory(category: string): Observable<Product[]> {

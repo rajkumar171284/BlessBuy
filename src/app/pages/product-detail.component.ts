@@ -54,7 +54,12 @@ import { ProductService } from '../services/product.service';
       </div>
     </div>
 
-    <div *ngIf="!product" class="loading">
+    <div *ngIf="isLoading" class="loader">
+      <div class="spinner"></div>
+      <p>Loading product...</p>
+    </div>
+
+    <div *ngIf="!isLoading && !product" class="loading">
       <p>Product not found</p>
     </div>
   `,
@@ -205,15 +210,39 @@ import { ProductService } from '../services/product.service';
       color: #999;
     }
 
-    @media (max-width: 768px) {
-      .product-detail {
-        grid-template-columns: 1fr;
-      }
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader p {
+      color: #667eea;
+      font-weight: bold;
+      font-size: 1.1rem;
     }
   `]
 })
 export class ProductDetailComponent implements OnInit {
   product: any;
+  isLoading: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -221,9 +250,20 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.route.params.subscribe(params => {
       const productId = params['id'];
-      this.product = this.productService.getProductById(productId);
+      this.productService.getProductById(productId).subscribe(
+        (product) => {
+          this.product = product;
+          this.isLoading = false;
+        },
+        (error) => {
+          console.error('Error loading product:', error);
+          this.product = undefined;
+          this.isLoading = false;
+        }
+      );
     });
   }
 }
