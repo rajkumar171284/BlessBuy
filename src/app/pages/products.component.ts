@@ -9,53 +9,96 @@ import { ProductService } from '../services/product.service';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="container-fluid py-5">
-      <h1 class="text-center mb-4">All Products</h1>
-      
-      <div class="row mb-4 g-2">
-        <div class="col-12 col-md-6">
-          <input type="text" class="form-control" placeholder="Search products..." [(ngModel)]="searchTerm" (ngModelChange)="filterProducts()">
-        </div>
-        <div class="col-12 col-md-6">
-          <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="filterProducts()">
-            <option value="">All Categories</option>
-            <option value="electronics">Electronics</option>
-            <option value="fashion">Fashion</option>
-            <option value="home">Home & Garden</option>
-            <option value="books">Books</option>
-          </select>
-        </div>
-      </div>
+    <div class="container py-5">
 
-      <div *ngIf="isLoading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2">Loading products...</p>
-      </div>
+  <!-- 🔥 Trending Section -->
+  <h2 class="section-title mb-4">🔥 Trending Now</h2>
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-md-4 col-lg-2" *ngFor="let t of trendingProducts">
+  <div class="trend-card shadow-sm" 
+       [routerLink]="['/product', t.id]"
+       style="cursor:pointer;">
+    <img [src]="t.image" class="trend-img" />
+    <p class="trend-name">{{ t.name }}</p>
+  </div>
+</div>
 
-      <div class="row g-3" *ngIf="!isLoading">
+  </div>
+
+  <!-- ⭐ Featured Section -->
+  <h2 class="section-title mb-4">⭐ Featured Products</h2>
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-md-4 col-lg-2" *ngFor="let f of featuredProducts">
+  <div class="trend-card shadow-sm" 
+       [routerLink]="['/product', f.id]"
+       style="cursor:pointer;">
+    <img [src]="f.image" class="trend-img" />
+    <p class="trend-name">{{ f.name }}</p>
+  </div>
+</div>
+
+  </div>
+
+  <!-- 🧰 Filters + Products -->
+  <h2 class="text-center mb-4">All Products</h2>
+
+  <div class="row mb-4 g-3">
+    <!-- Sidebar Filters -->
+    <div class="col-12 col-md-3">
+      <div class="filter-box shadow-sm">
+        <h5 class="filter-title">Filters</h5>
+
+        <label class="form-label mt-2">Search</label>
+        <input type="text" class="form-control" [(ngModel)]="searchTerm" (ngModelChange)="filterProducts()">
+
+        <label class="form-label mt-3">Category</label>
+        <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="filterProducts()">
+          <option value="">All</option>
+          <option value="electronics">Electronics</option>
+          <option value="fashion">Fashion</option>
+          <option value="home">Home & Garden</option>
+          <option value="books">Books</option>
+        </select>
+
+        <label class="form-label mt-3">Sort By</label>
+        <select class="form-select" [(ngModel)]="sortOption" (change)="sortProducts()">
+          <option value="price_low">Price: Low to High</option>
+          <option value="price_high">Price: High to Low</option>
+          <option value="commission_high">Commission: High %</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="col-12 col-md-9">
+      <div class="row g-3">
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let product of filteredProducts">
           <div class="card h-100 shadow-sm hover-shadow">
-            <img [src]="product.image" class="card-img-top" [alt]="product.name" style="height: 200px; object-fit: cover;">
+            <img [src]="product.image" class="card-img-top">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title">{{ product.name }}</h5>
-              <p class="card-text text-muted small">{{ product.category }}</p>
-              <p class="card-text fw-bold text-primary">\${{ product.price }}</p>
-              <p class="card-text small">Commission: <span class="badge bg-success">{{ product.commission }}%</span></p>
+              <p class="card-text small text-muted">{{ product.category }}</p>
+
+              <p class="price-tag">₹{{ product.price }}</p>
+              <p class="small">Commission: <span class="badge bg-success">{{ product.commission }}%</span></p>
+
               <div class="mt-auto d-grid gap-2">
-                <a [routerLink]="['/product', product.id]" class="btn btn-outline-primary btn-sm">View Details</a>
-                <a [href]="product.affiliateLink" target="_blank" class="btn btn-primary btn-sm">Buy Now</a>
+                <a [routerLink]="['/product', product.id]" class="btn btn-outline-primary btn-sm">View</a>
+                <a [href]="product.affiliateLink" target="_blank" class="btn btn-primary btn-sm">Buy</a>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="!isLoading && filteredProducts.length === 0" class="text-center py-5">
-        <p class="text-muted">No products found. Try adjusting your filters.</p>
+      <!-- No results -->
+      <div *ngIf="filteredProducts.length === 0" class="text-center py-5">
+        <p class="text-muted">No products found</p>
       </div>
     </div>
+  </div>
+</div>
+
   `,
   styles: [`
     .products-container {
@@ -222,6 +265,55 @@ import { ProductService } from '../services/product.service';
     .card:hover .card-img-top {
       transform: scale(1.05);
     }
+
+    .section-title {
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #333;
+}
+
+.trend-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.trend-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.trend-img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+}
+
+.trend-name {
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.filter-box {
+  border-radius: 10px;
+  padding: 20px;
+  background: #fff;
+}
+
+.filter-title {
+  font-weight: 600;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.price-tag {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #007bff;
+}
+
   `]
 })
 export class ProductsComponent implements OnInit {
@@ -230,13 +322,18 @@ export class ProductsComponent implements OnInit {
   searchTerm: string = '';
   selectedCategory: string = '';
   isLoading: boolean = true;
-
-  constructor(private productService: ProductService) {}
+  trendingProducts: any = [];
+  featuredProducts: any = [];
+  sortOption = '';
+  constructor(private productService: ProductService) { }
 
   ngOnInit() {
-    this.isLoading = true;
     this.productService.getProductsObservable().subscribe(products => {
       this.products = products;
+
+      this.trendingProducts = products.slice(0, 6);
+      this.featuredProducts = products.slice(6, 12);
+
       this.filterProducts();
       this.isLoading = false;
     });
@@ -248,5 +345,16 @@ export class ProductsComponent implements OnInit {
       const matchesCategory = !this.selectedCategory || product.category === this.selectedCategory;
       return matchesSearch && matchesCategory;
     });
+  }
+  sortProducts() {
+    if (this.sortOption === 'price_low') {
+      this.filteredProducts.sort((a, b) => a.price - b.price);
+    }
+    else if (this.sortOption === 'price_high') {
+      this.filteredProducts.sort((a, b) => b.price - a.price);
+    }
+    else if (this.sortOption === 'commission_high') {
+      this.filteredProducts.sort((a, b) => b.commission - a.commission);
+    }
   }
 }
