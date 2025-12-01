@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -220,7 +220,7 @@ import { AuthService } from '../services/auth.service';
     }
   `]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email: string = '';
   password: string = '';
   loading: boolean = false;
@@ -232,6 +232,15 @@ export class LoginComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+    // Redirect to dashboard if already logged in
+    this.authService.getCurrentUser().subscribe(user => {
+      if (user) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
 
   loginWithEmail() {
     if (!this.email || !this.password) {

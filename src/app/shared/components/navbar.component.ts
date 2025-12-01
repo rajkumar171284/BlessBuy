@@ -27,6 +27,7 @@ import { AuthService } from '../../services/auth.service';
             </button>
             <div *ngIf="showUserMenu" class="user-dropdown">
               <a routerLink="/dashboard">Dashboard</a>
+              <a routerLink="/admin/products">Admin Panel</a>
               <a href="#settings">Settings</a>
               <hr>
               <a (click)="logout()" class="logout-btn">Logout</a>
