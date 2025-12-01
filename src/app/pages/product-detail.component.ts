@@ -8,60 +8,100 @@ import { ProductService } from '../services/product.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="product-detail-container" *ngIf="product">
-      <a routerLink="/products" class="back-link">← Back to Products</a>
-      
-      <div class="product-detail">
-        <div class="product-image">
-          <img [src]="product.image" [alt]="product.name">
+    <div class="container py-5" *ngIf="product">
+
+  <a routerLink="/products" class="btn btn-link p-0 mb-3">
+    ← Back to Products
+  </a>
+
+  <div class="card shadow-sm p-4">
+    <div class="row g-4">
+
+      <!-- LEFT IMAGE -->
+      <div class="col-md-6 text-center">
+        <img 
+          [src]="product.image" 
+          [alt]="product.name" 
+          class="img-fluid rounded product-img"
+        >
+      </div>
+
+      <!-- RIGHT INFO -->
+      <div class="col-md-6">
+
+        <h2 class="fw-bold mb-2">{{ product.name }}</h2>
+        <p class="text-muted">{{ product.category }}</p>
+
+        <!-- RATING -->
+        <div class="d-flex align-items-center mb-3">
+          <span class="text-warning fs-4">★★★★★</span>
+          <span class="ms-2 text-muted">
+            ({{ product.reviews }} reviews)
+          </span>
         </div>
 
-        <div class="product-info">
-          <h1>{{ product.name }}</h1>
-          <p class="category">{{ product.category }}</p>
-          
-          <div class="rating">
-            <span class="stars">★★★★★</span>
-            <span class="rating-text">({{ product.reviews }} reviews)</span>
-          </div>
-
-          <div class="price-section">
-            <p class="price">\${{ product.price }}</p>
-            <p class="commission">Earn {{ product.commission }}% commission</p>
-          </div>
-
-          <div class="description">
-            <h3>Description</h3>
-            <p>{{ product.description }}</p>
-          </div>
-
-          <div class="features">
-            <h3>Features</h3>
-            <ul>
-              <li *ngFor="let feature of product.features">{{ feature }}</li>
-            </ul>
-          </div>
-
-          <div class="actions">
-            <a [href]="product.affiliateLink" target="_blank" class="buy-btn">Buy on Amazon</a>
-            <button class="add-to-wishlist">♥ Add to Wishlist</button>
-          </div>
-
-          <div class="affiliate-info">
-            <p><strong>Note:</strong> This is an affiliate link. We earn a commission when you make a purchase, at no extra cost to you.</p>
-          </div>
+        <!-- PRICE + COMMISSION -->
+        <div class="border-top border-bottom py-3 mb-3">
+          <h3 class="text-primary fw-bold mb-0">₹{{ product.price }}</h3>
+          <p class="text-success fw-semibold mt-2">
+            Earn <span class="text-success">{{ product.commission }}%</span> commission
+          </p>
         </div>
+
+        <!-- DESCRIPTION -->
+        <div class="mb-4">
+          <h5 class="fw-bold">Description</h5>
+          <p class="text-secondary">{{ product.description }}</p>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="mb-4">
+          <h5 class="fw-bold">Features</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" *ngFor="let feature of product.features">
+              ✔ {{ feature }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="d-flex gap-3 flex-wrap mt-4">
+
+          <a 
+            [href]="product.affiliateLink" 
+            target="_blank" 
+            class="btn btn-primary btn-lg px-4"
+          >
+            Buy on Amazon
+          </a>
+
+          <button class="btn btn-outline-danger btn-lg px-4">
+            ♥ Add to Wishlist
+          </button>
+        </div>
+
+        <!-- AFFILIATE NOTE -->
+        <div class="alert alert-info mt-4">
+          <strong>Note:</strong> This is an affiliate product. 
+          You pay the same price — BlessBuy earns a small commission.
+        </div>
+
       </div>
     </div>
+  </div>
+</div>
 
-    <div *ngIf="isLoading" class="loader">
-      <div class="spinner"></div>
-      <p>Loading product...</p>
-    </div>
+<!-- LOADER -->
+<div *ngIf="isLoading" class="d-flex flex-column align-items-center py-5">
+  <div class="spinner-border text-primary" role="status"></div>
+  <p class="mt-3 text-primary fw-bold">Loading product...</p>
+</div>
 
-    <div *ngIf="!isLoading && !product" class="loading">
-      <p>Product not found</p>
-    </div>
+<!-- NOT FOUND -->
+<div *ngIf="!isLoading && !product" class="text-center py-5 text-muted">
+  Product not found
+</div>
+
   `,
   styles: [`
     .product-detail-container {
@@ -91,7 +131,10 @@ import { ProductService } from '../services/product.service';
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
+.product-img {
+  max-height: 400px;
+  object-fit: contain;
+}
     .product-image img {
       width: 100%;
       border-radius: 8px;
@@ -238,6 +281,31 @@ import { ProductService } from '../services/product.service';
       font-weight: bold;
       font-size: 1.1rem;
     }
+    .product-img {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.list-group-item {
+  border: none;
+  padding-left: 0;
+}
+
+.btn-lg {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.alert-info {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .product-img {
+    max-height: 300px;
+  }
+}
+
   `]
 })
 export class ProductDetailComponent implements OnInit {
