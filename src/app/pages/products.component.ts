@@ -9,39 +9,51 @@ import { ProductService } from '../services/product.service';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   template: `
-    <div class="products-container">
-      <h1>All Products</h1>
+    <div class="container-fluid py-5">
+      <h1 class="text-center mb-4">All Products</h1>
       
-      <div class="filters">
-        <input type="text" placeholder="Search products..." [(ngModel)]="searchTerm" (ngModelChange)="filterProducts()">
-        <select [(ngModel)]="selectedCategory" (ngModelChange)="filterProducts()">
-          <option value="">All Categories</option>
-          <option value="electronics">Electronics</option>
-          <option value="fashion">Fashion</option>
-          <option value="home">Home & Garden</option>
-          <option value="books">Books</option>
-        </select>
-      </div>
-
-      <div *ngIf="isLoading" class="loader">
-        <div class="spinner"></div>
-        <p>Loading products...</p>
-      </div>
-
-      <div class="products-grid" *ngIf="!isLoading">
-        <div class="product-card" *ngFor="let product of filteredProducts">
-          <img [src]="product.image" [alt]="product.name">
-          <h3>{{ product.name }}</h3>
-          <p class="category">{{ product.category }}</p>
-          <p class="price">\${{ product.price }}</p>
-          <p class="commission">Commission: {{ product.commission }}%</p>
-          <a [routerLink]="['/product', product.id]" class="view-btn">View Details</a>
-          <a [href]="product.affiliateLink" target="_blank" class="buy-btn">Buy Now</a>
+      <div class="row mb-4 g-2">
+        <div class="col-12 col-md-6">
+          <input type="text" class="form-control" placeholder="Search products..." [(ngModel)]="searchTerm" (ngModelChange)="filterProducts()">
+        </div>
+        <div class="col-12 col-md-6">
+          <select class="form-select" [(ngModel)]="selectedCategory" (ngModelChange)="filterProducts()">
+            <option value="">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="fashion">Fashion</option>
+            <option value="home">Home & Garden</option>
+            <option value="books">Books</option>
+          </select>
         </div>
       </div>
 
-      <div *ngIf="!isLoading && filteredProducts.length === 0" class="no-products">
-        <p>No products found. Try adjusting your filters.</p>
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading products...</p>
+      </div>
+
+      <div class="row g-3" *ngIf="!isLoading">
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3" *ngFor="let product of filteredProducts">
+          <div class="card h-100 shadow-sm hover-shadow">
+            <img [src]="product.image" class="card-img-top" [alt]="product.name" style="height: 200px; object-fit: cover;">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text text-muted small">{{ product.category }}</p>
+              <p class="card-text fw-bold text-primary">\${{ product.price }}</p>
+              <p class="card-text small">Commission: <span class="badge bg-success">{{ product.commission }}%</span></p>
+              <div class="mt-auto d-grid gap-2">
+                <a [routerLink]="['/product', product.id]" class="btn btn-outline-primary btn-sm">View Details</a>
+                <a [href]="product.affiliateLink" target="_blank" class="btn btn-primary btn-sm">Buy Now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && filteredProducts.length === 0" class="text-center py-5">
+        <p class="text-muted">No products found. Try adjusting your filters.</p>
       </div>
     </div>
   `,
@@ -191,6 +203,23 @@ import { ProductService } from '../services/product.service';
       color: #667eea;
       font-weight: bold;
       font-size: 1.1rem;
+    }
+
+    .hover-shadow {
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .hover-shadow:hover {
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+      transform: translateY(-5px);
+    }
+
+    .card-img-top {
+      transition: transform 0.3s;
+    }
+
+    .card:hover .card-img-top {
+      transform: scale(1.05);
     }
   `]
 })
